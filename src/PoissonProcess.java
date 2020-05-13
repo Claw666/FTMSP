@@ -10,14 +10,16 @@ public class PoissonProcess {
         this.rand = rand;
     }
 
+    // Getter - get random value
     public Random getRand() {
         return rand;
     }
-
+    // Getter - get lambda
     public double getLambda() {
         return lambda;
     }
 
+    //Getter - get next arrival 
     public double getNextArrival (){
         return - Math.log(1.0 - rand.nextDouble()) / lambda;
     }
