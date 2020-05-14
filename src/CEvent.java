@@ -43,4 +43,6 @@ public class CEvent
 	{
 		return executionTime;
 	}
+
+	public String toString(){return target.toString();}
 }

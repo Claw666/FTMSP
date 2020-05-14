@@ -1,11 +1,12 @@
 
+// Renaming file from Machine to csAgent
 
 /**
  *	Machine in a factory
  *	@author Joel Karel
  *	@version %I%, %G%
  */
-public class Machine implements CProcess,ProductAcceptor
+public class csAgent implements CProcess,ProductAcceptor
 {
 	/** Product that is being handled  */
 	private Product product;
@@ -35,7 +36,7 @@ public class Machine implements CProcess,ProductAcceptor
 	*	@param e	Eventlist that will manage events
 	*	@param n	The name of the machine
 	*/
-	public Machine(Queue q, ProductAcceptor s, CEventList e, String n)
+	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n)
 	{
 		status='i';
 		queue=q;
@@ -55,7 +56,7 @@ public class Machine implements CProcess,ProductAcceptor
 	*	@param n	The name of the machine
 	*        @param m	Mean processing time
 	*/
-	public Machine(Queue q, ProductAcceptor s, CEventList e, String n, double m)
+	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n, double m)
 	{
 		status='i';
 		queue=q;
@@ -75,7 +76,7 @@ public class Machine implements CProcess,ProductAcceptor
 	*	@param n	The name of the machine
 	*        @param st	service times
 	*/
-	public Machine(Queue q, ProductAcceptor s, CEventList e, String n, double[] st)
+	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n, double[] st)
 	{
 		status='i';
 		queue=q;

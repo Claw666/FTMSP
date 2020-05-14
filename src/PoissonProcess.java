@@ -19,7 +19,7 @@ public class PoissonProcess {
         return lambda;
     }
 
-    //Getter - get next arrival 
+    //Getter - get next arrival
     public double getNextArrival (){
         return - Math.log(1.0 - rand.nextDouble()) / lambda;
     }
