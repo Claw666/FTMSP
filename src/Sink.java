@@ -1,6 +1,9 @@
-
-
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+
+
 /**
  *	A sink
  *	@author Joel Karel
@@ -88,4 +91,38 @@ public class Sink implements ProductAcceptor
 		tmp = stations.toArray(tmp);
 		return tmp;
 	}
+	public void writeToFile(String filename)
+	{
+		FileWriter fw = null;
+
+		try {
+			fw = new FileWriter(filename);
+			for (int i = 0; i < products.size(); i++) {
+				fw.append(String.valueOf(numbers.get(i)));
+				fw.append(",");
+				fw.append(String.valueOf(events.get(i)));
+				fw.append(",");
+				fw.append(String.valueOf(times.get(i)));
+				fw.append(",");
+				fw.append(String.valueOf(stations.get(i)));
+				fw.append("\n");
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Error in CSV writes");
+			e.printStackTrace();
+		} finally {
+
+			try {
+				fw.flush();
+				fw.close();
+			} catch (IOException e) {
+				System.out.println("Error while flushing/closing fileWriter");
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
 }

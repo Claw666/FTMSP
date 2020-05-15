@@ -1,5 +1,3 @@
-
-
 import java.util.ArrayList;
 
 /**
@@ -25,25 +23,22 @@ public class Queue implements ProductAcceptor
 	}
 	
 	/**
-	*	Asks a queue to give a product to a machine
+	*	Asks a queue to give a product to a machine (here product is a call and the machine is the CS agent)
 	*	True is returned if a product could be delivered; false if the request is queued
 	*/
 	public boolean askProduct(csAgent csAgent)
 	{
 		// This is only possible with a non-empty queue
-		if(row.size()>0)
-		{
+		if(row.size()>0) {
 			// If the machine accepts the product
-			if(csAgent.giveProduct(row.get(0)))
-			{
+			if(csAgent.giveProduct(row.get(0))) {
 				row.remove(0);// Remove it from the queue
 				return true;
 			}
 			else
 				return false; // Machine rejected; don't queue request
 		}
-		else
-		{
+		else {
 			requests.add(csAgent);
 			return false; // queue request
 		}
@@ -58,17 +53,23 @@ public class Queue implements ProductAcceptor
 		// Check if the machine accepts it
 		if(requests.size()<1)
 			row.add(p); // Otherwise store it
-		else
-		{
+		else {
 			boolean delivered = false;
-			while(!delivered & (requests.size()>0))
-			{
+			ArrayList<csAgent> listOfRejected = new ArrayList<>();
+			while(!delivered & (requests.size()>0)) {
 				delivered=requests.get(0).giveProduct(p);
 				// remove the request regardless of whether or not the product has been accepted
-				requests.remove(0);
+				csAgent removedReq = requests.remove(0);
+				if(!delivered) {
+					// If CSA cant take call, add to rejected list.
+					listOfRejected.add(removedReq);
+				}
 			}
 			if(!delivered)
 				row.add(p); // Otherwise store it
+			for (csAgent CSA: listOfRejected) {
+				requests.add(CSA);
+			}
 		}
 		return true;
 	}

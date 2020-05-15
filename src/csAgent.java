@@ -26,11 +26,30 @@ public class csAgent implements CProcess,ProductAcceptor
 	private double[] processingTimes;
 	/** Processing time iterator */
 	private int procCnt;
-	
+	/**  Type of CSA - business or consumer */
+	private int typeOfCSA;
+	/** Privilege of handling all types of calls */
+	private boolean privHandBothType;
+	/** Standard Deviation */
+	private double standardDeviation;
+	/** Truncated Value */
+	private double truncatedThreshold;
+
+	public double getMeanProcTime(){
+		return this.meanProcTime;
+	}
+
+	public double getStandardDeviation(){
+		return this.standardDeviation;
+	}
+
+	public double getTruncatedThreshold(){
+		return this.truncatedThreshold;
+	}
 
 	/**
 	*	Constructor
-	*        Service times are exponentially distributed with mean 30
+	*   Service times are exponentially distributed with mean 30
 	*	@param q	Queue from which the machine has to take products
 	*	@param s	Where to send the completed products
 	*	@param e	Eventlist that will manage events
@@ -44,6 +63,51 @@ public class csAgent implements CProcess,ProductAcceptor
 		eventlist=e;
 		name=n;
 		meanProcTime=30;
+		queue.askProduct(this);
+	}
+
+	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n, int typeOfCSA)
+	{
+		status='i';
+		queue=q;
+		sink=s;
+		eventlist=e;
+		name=n;
+		this.typeOfCSA = typeOfCSA;
+		if(typeOfCSA == 0){
+            standardDeviation = 35;
+			meanProcTime=72;
+			truncatedThreshold = 25;
+
+		} else{
+            standardDeviation = 72;
+			meanProcTime=216;
+			truncatedThreshold = 45;
+		}
+		privHandBothType = false;
+		queue.askProduct(this);
+	}
+
+	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n, int typeOfCSA, boolean privHandBothType)
+	{
+		status='i';
+		queue=q;
+		sink=s;
+		eventlist=e;
+		name=n;
+		if(typeOfCSA == 0){
+            standardDeviation = 35;
+			meanProcTime=72;
+			truncatedThreshold = 25;
+
+		}
+		else{
+            standardDeviation = 72;
+			meanProcTime=216;
+			truncatedThreshold = 45;
+		}
+		this.typeOfCSA = typeOfCSA;
+		this.privHandBothType = privHandBothType;
 		queue.askProduct(this);
 	}
 
@@ -97,9 +161,9 @@ public class csAgent implements CProcess,ProductAcceptor
 	public void execute(int type, double tme)
 	{
 		// show arrival
-		System.out.println("Product finished at time = " + tme);
+		System.out.println("Call finished at " + tme + " second");
 		// Remove product from system
-		product.stamp(tme,"Production complete",name);
+		product.stamp(tme,"Call completed",name);
 		sink.giveProduct(product);
 		product=null;
 		// set machine status to idle
@@ -119,14 +183,18 @@ public class csAgent implements CProcess,ProductAcceptor
 		// Only accept something if the machine is idle
 		if(status=='i')
 		{
-			// accept the product
-			product=p;
-			// mark starting time
-			product.stamp(eventlist.getTime(),"Production started",name);
-			// start production
-			startProduction();
-			// Flag that the product has arrived
-			return true;
+		    // If corp CSA in idle or consumer agent idle
+			if (this.privHandBothType || this.typeOfCSA == p.getTypeOfCustCall()) {
+				System.out.println(this.name + " Gets call with type " + typeOfCSA);
+				// accept the product
+				product=p;
+				// mark starting time
+				product.stamp(eventlist.getTime(),"Call started",name);
+				// start production
+				startProduction();
+				// Flag that the product has arrived
+				return true;
+			} else return false;
 		}
 		// Flag that the product has been rejected
 		else return false;
@@ -142,10 +210,10 @@ public class csAgent implements CProcess,ProductAcceptor
 		// generate duration
 		if(meanProcTime>0)
 		{
-			double duration = drawRandomExponential(meanProcTime);
+			double duration = drawTruncatedNormalDist();
 			// Create a new event in the eventlist
 			double tme = eventlist.getTime();
-			eventlist.add(this,0,tme+duration); //target,type,time
+			eventlist.add(this,typeOfCSA,tme+duration); //target,type,time
 			// set status to busy
 			status='b';
 		}
@@ -173,4 +241,61 @@ public class csAgent implements CProcess,ProductAcceptor
 		double res = -mean*Math.log(u);
 		return res;
 	}
+
+	// https://mathworld.wolfram.com/Box-MullerTransformation.html - Box Muller Transform
+	// https://stackoverflow.com/questions/18039341/using-the-box-muller-transform-to-generate-pseudorandom-numbers-with-any-sigma-a
+	public double boxMullerTransformOne(double U1,double U2){
+		double Z1;
+
+		Z1 = getMeanProcTime() + getStandardDeviation() * (Math.sqrt(-2 * Math.log(U1)) * (Math.cos((2 * Math.PI) * U2)));
+
+		//check if value is below threshold
+		if (Z1 < getTruncatedThreshold()){
+			Z1 = -1;
+			return Z1;
+		}
+        return Z1;
+	}
+
+
+    public double boxMullerTransformTwo(double U1,double U2){
+        double Z2;
+
+        Z2 = getMeanProcTime() + getStandardDeviation() * (Math.sqrt(-2 * Math.log(U1)) * (Math.sin((2 * Math.PI) * U2)));
+
+        //check if value is below threshold - set it to an impossible value so we can check it later on if it is in the range or not.
+        if (Z2 < getTruncatedThreshold()){
+            Z2 = -1;
+            return Z2;
+        }
+        return Z2;
+    }
+
+
+	public double drawTruncatedNormalDist() {
+		double U1 = Math.random();
+		double U2 = Math.random();
+		double randVar1 = boxMullerTransformOne(U1,U2);
+		double randVar2 = boxMullerTransformTwo(U1,U2);
+
+		//return randVar2 if the other exceeded the range
+		if (randVar1 < 0 && randVar2 > 0)
+			return randVar2;
+
+        //return randVar1 if the other exceeded the range
+		else if(randVar1 > 0 && randVar2 < 0)
+			return randVar1;
+
+		//in case both our outside the range, run algorithm again.
+		else if (randVar1 < 0 && randVar2 < 0)
+            drawTruncatedNormalDist();
+
+		//in case both are valid, choose randomly from them.
+        double tossACoin = Math.random();
+		if(tossACoin <=0.5) {
+			return randVar1;
+		}
+		return randVar2;
+	}
+	public String toString() { return "Status of CS Agent: " + status + ", for agent: " + name; }
 }

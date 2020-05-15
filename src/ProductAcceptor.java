@@ -1,4 +1,4 @@
-
+/** Unchanged */
 
 /**
  *	Blueprint for accepting products

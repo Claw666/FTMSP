@@ -20,6 +20,8 @@ public class Source implements CProcess
 	private double[] interarrivalTimes;
 	/** Interarrival time iterator */
 	private int interArrCnt;
+	/** Type of Source */
+	private int typeOfSource;
 
 	/**
 	*	Constructor, creates objects
@@ -36,6 +38,21 @@ public class Source implements CProcess
 		meanArrTime=33;
 		// put first event in list for initialization
 		list.add(this,0,drawRandomExponential(meanArrTime)); //target,type,time
+	}
+	// TODO write comment
+	public Source(ProductAcceptor q, CEventList l, String n, int typeOfSource) {
+		list = l;
+		queue = q;
+		name = n;
+		this.typeOfSource = typeOfSource;
+		if (typeOfSource == 0) {
+			meanArrTime = getMeanArrivalRateConsumers(l.getTime());
+		}
+		if (typeOfSource == 1) {
+			meanArrTime = getMeanArrivalRateCorporate(l.getTime());
+		}
+		// put first event in list for initialization
+		list.add(this, typeOfSource, drawRandomExponential(meanArrTime) + l.getTime()); //target,type,time
 	}
 
 	/**
@@ -76,7 +93,7 @@ public class Source implements CProcess
 		list.add(this,0,interarrivalTimes[0]); //target,type,time
 	}
 	
-        @Override
+	@Override
 	public void execute(int type, double tme)
 	{
 		// show arrival
@@ -111,7 +128,50 @@ public class Source implements CProcess
 		// draw a [0,1] uniform distributed number
 		double u = Math.random();
 		// Convert it into a exponentially distributed random variate with mean 33
-		double res = -mean*Math.log(u);
-		return res;
+		return -mean*Math.log(u);
+	}
+
+	public static double getMeanArrivalRateConsumers(double tme){
+		//Handle Hours in 24h format
+		double tmeInHour = tme / 3600;
+		handle24H(tmeInHour);
+
+		// A nonstationary Poisson process that is a sinusoid
+		// 60 divided by rate per minute so average arrival time will be returned in seconds
+		// Inspiration for sinusoidal rate: http://www.columbia.edu/~ww2040/UsingBD.pdf
+		return  60 / (1.8 * Math.sin((2*Math.PI/24)*(tmeInHour+15))+2);
+	}
+
+	public static double getMeanArrivalRateCorporate(double tme) {
+		double averageTime = 0;
+
+		//Handle Hours in 24h format
+		double tmeInHour = tme / 3600;
+		handle24H(tmeInHour);
+
+
+		// Poisson process and between 8 am and 6 pm - rate 1 per minute
+		if (8 < tmeInHour && tmeInHour < 18) {
+			averageTime = 60 / 1;
+		}
+		// Poisson process and between 6 pm and 8 am - rate 0.2 per minute
+		if (18 < tmeInHour || tmeInHour < 8) {
+			averageTime = 60 / 0.2;
+		}
+
+		return averageTime;
+	}
+
+
+	// Function to handle 24h format: 30h = 6am in the morning
+	public static double handle24H(double timeHour) {
+		if (timeHour > 24) {
+			timeHour = timeHour - 24;
+		}
+		return timeHour;
+	}
+
+	public String toString(){
+		return "Source: " + typeOfSource + " with mean arrival time " + meanArrTime;
 	}
 }

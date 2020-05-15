@@ -1,6 +1,7 @@
-
-
 import java.util.ArrayList;
+
+// Product is Call in our case. Added type of cust call
+
 /**
  *	Product that is send trough the system
  *	@author Joel Karel
@@ -12,17 +13,24 @@ class Product
 	private ArrayList<Double> times;
 	private ArrayList<String> events;
 	private ArrayList<String> stations;
+	private int typeOfCustCall;
 	
 	/** 
 	*	Constructor for the product
 	*	Mark the time at which it is created
-	*	@param create The current time
 	*/
 	public Product()
 	{
 		times = new ArrayList<>();
 		events = new ArrayList<>();
 		stations = new ArrayList<>();
+	}
+
+	public Product( int typeOfCustCall) {
+		times = new ArrayList<>();
+		events = new ArrayList<>();
+		stations = new ArrayList<>();
+		this.typeOfCustCall = typeOfCustCall;
 	}
 	
 	
@@ -32,7 +40,8 @@ class Product
 		events.add(event);
 		stations.add(station);
 	}
-	
+
+	/** Getter functions */
 	public ArrayList<Double> getTimes()
 	{
 		return times;
@@ -47,6 +56,8 @@ class Product
 	{
 		return stations;
 	}
+
+	public int getTypeOfCustCall() { return typeOfCustCall; }
 	
 	public double[] getTimesAsArray()
 	{
@@ -72,4 +83,6 @@ class Product
 		tmp = stations.toArray(tmp);
 		return tmp;
 	}
+
+	public String toString(){ return "Type of Call: " + typeOfCustCall + "and no. of times: " + times; }
 }
