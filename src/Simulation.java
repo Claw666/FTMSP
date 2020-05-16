@@ -34,11 +34,12 @@ public class Simulation {
         //Length of shift matrix
         int numberOfShifts = shifts.length;
 
+
         //initialize counter
         int j = 0;
 
         //Boolean for checking if CSA can handle both types of call or not
-        boolean privHandAllType = false;
+        boolean privHandAllType = true;
 
         //Do for all shifts - here for 3 shifts
         while (j < numberOfShifts) {
