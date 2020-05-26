@@ -1,11 +1,11 @@
-function [over5, over10, over3, over7] = checkRequirements(phonecalls)
+function passedRequirements = checkRequirementsBoolean(phonecalls)
 
-% Function that takes in phonecalls matrix and returns the amount of calls
-% that took to long 
-%over5 and over10 -> consumercalls 
-%over3 and over7 -> corporatecalls
-
+% Function that takes in phonecalls matrix
+%returns true if requirements hold
+%over5p, over10p -> consumercalls
+%over3p, over7p -> corporatecalls
 % phonecalls structure: [type of call (0 / 1) , start (s), end (s)]
+    passedRequirements = true
     over5 = 0;
     over10 = 0;
     over3 = 0;
@@ -35,6 +35,25 @@ function [over5, over10, over3, over7] = checkRequirements(phonecalls)
             end
         end
     end
+    over10p = over10 / consumercalls
+    over5p = (over5 + over10) / consumercalls
+    over7p = over7 / corporatecalls
+    over3p = (over3 + over7) / corporatecalls
+    
+    if over10p > 0.05
+         passedRequirements = false
+    end
+    
+    if over5p > 0.1
+        passedRequirements = false
+    end
+    
+    if over7p > 0.01
+        passedRequirements = false
+    end
+    
+    if over3p > 0.05
+        passedRequirements = false
+    end
+    
 end
-
-

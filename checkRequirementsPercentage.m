@@ -1,10 +1,9 @@
-function [over5, over10, over3, over7] = checkRequirements(phonecalls)
+function [over5p, over10p, over3p, over7p] = checkRequirementsPercentage(phonecalls)
 
-% Function that takes in phonecalls matrix and returns the amount of calls
-% that took to long 
-%over5 and over10 -> consumercalls 
-%over3 and over7 -> corporatecalls
-
+% Function that takes in phonecalls matrix
+%returns percentage of calls are overtime
+%over5p, over10p -> consumercalls
+%over3p, over7p -> corporatecalls
 % phonecalls structure: [type of call (0 / 1) , start (s), end (s)]
     over5 = 0;
     over10 = 0;
@@ -35,6 +34,8 @@ function [over5, over10, over3, over7] = checkRequirements(phonecalls)
             end
         end
     end
+    over10p = over10 / consumercalls
+    over5p = (over5 + over10) / consumercalls
+    over7p = over7 / corporatecalls
+    over3p = (over3 + over7) / corporatecalls
 end
-
-
