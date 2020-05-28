@@ -21,7 +21,9 @@ public class Source implements CProcess
 	/** Interarrival time iterator */
 	private int interArrCnt;
 	/** Type of Source */
-	private int typeOfSource;
+	private int typeOfCall;
+
+	private int callerID;
 
 	/**
 	*	Constructor, creates objects
@@ -40,19 +42,20 @@ public class Source implements CProcess
 		list.add(this,0,drawRandomExponential(meanArrTime)); //target,type,time
 	}
 	// TODO write comment
-	public Source(ProductAcceptor q, CEventList l, String n, int typeOfSource) {
-		list = l;
-		queue = q;
-		name = n;
-		this.typeOfSource = typeOfSource;
-		if (typeOfSource == 0) {
-			meanArrTime = getMeanArrivalRateConsumers(l.getTime());
+	public Source(ProductAcceptor q, CEventList l, String n, int typeOfCall) {
+		this.list = l;
+		this.queue = q;
+		this.name = n;
+		this.typeOfCall = typeOfCall;
+		double firstCall = 0;
+		if (typeOfCall == 0) {
+			firstCall = drawRandomExponential(l.getTime()) + l.getTime();
 		}
-		if (typeOfSource == 1) {
-			meanArrTime = getMeanArrivalRateCorporate(l.getTime());
+		if (typeOfCall == 1) {
+			firstCall = drawRandomExponential(getMeanArrivalRateCorporate(l.getTime())) + l.getTime();
 		}
 		// put first event in list for initialization
-		list.add(this, typeOfSource, drawRandomExponential(meanArrTime) + l.getTime()); //target,type,time
+		list.add(this, typeOfCall, firstCall);
 	}
 
 	/**
@@ -99,27 +102,19 @@ public class Source implements CProcess
 		// show arrival
 		System.out.println("Arrival at time = " + tme);
 		// give arrived product to queue
-		Product p = new Product();
+		Product p = new Product(typeOfCall, callerID);
+		callerID = callerID+1;
 		p.stamp(tme,"Creation",name);
 		queue.giveProduct(p);
-		// generate duration
-		if(meanArrTime>0)
-		{
-			double duration = drawRandomExponential(meanArrTime);
-			// Create a new event in the eventlist
-			list.add(this,0,tme+duration); //target,type,time
+
+		if(typeOfCall == 0) {
+			double arrivalTime = drawRandomNonStationaryExp(tme);
+			list.add(this,typeOfCall, arrivalTime);
 		}
-		else
-		{
-			interArrCnt++;
-			if(interarrivalTimes.length>interArrCnt)
-			{
-				list.add(this,0,tme+interarrivalTimes[interArrCnt]); //target,type,time
-			}
-			else
-			{
-				list.stop();
-			}
+
+		if(typeOfCall == 1) {
+			double duration = drawRandomExponential(getMeanArrivalRateCorporate(tme));
+			list.add(this,typeOfCall, (duration+tme));
 		}
 	}
 	
@@ -127,27 +122,37 @@ public class Source implements CProcess
 	{
 		// draw a [0,1] uniform distributed number
 		double u = Math.random();
-		// Convert it into a exponentially distributed random variate with mean 33
+		// Convert it into a exponentially distributed random variate with mean
 		return -mean*Math.log(u);
 	}
 
-	public static double getMeanArrivalRateConsumers(double tme){
-		//Handle Hours in 24h format
-		double tmeInHour = tme / 3600;
-		handle24H(tmeInHour);
+	public static double drawRandomNonStationaryExp(double tme){
 
-		// A nonstationary Poisson process that is a sinusoid
-		// 60 divided by rate per minute so average arrival time will be returned in seconds
-		// Inspiration for sinusoidal rate: http://www.columbia.edu/~ww2040/UsingBD.pdf
-		return  60 / (1.8 * Math.sin((2*Math.PI/24)*(tmeInHour+15))+2);
+		//Equations by general thinning algorithm - recursive function
+		double maxLambda = 3.8;
+
+		double U1 = Math.random();
+		double U2 = Math.random();
+
+		double arrivalTime = (tme / 60) - (1/maxLambda)*Math.log(U1);
+
+		//Handle Hours in 24h format
+		double tmeInHour = handle24H(arrivalTime / 3600);
+
+		double lambdaT = (1.8 * Math.sin((2 * Math.PI / 24) * (tmeInHour + 15)) + 2 );
+
+		if (U2 <= (lambdaT/maxLambda)) {
+			return arrivalTime * 60 ;
+		}
+
+		return drawRandomNonStationaryExp(arrivalTime * 60);
 	}
 
 	public static double getMeanArrivalRateCorporate(double tme) {
 		double averageTime = 0;
 
 		//Handle Hours in 24h format
-		double tmeInHour = tme / 3600;
-		handle24H(tmeInHour);
+		double tmeInHour = handle24H(tme / 3600);
 
 
 		// Poisson process and between 8 am and 6 pm - rate 1 per minute
@@ -172,6 +177,6 @@ public class Source implements CProcess
 	}
 
 	public String toString(){
-		return "Source: " + typeOfSource + " with mean arrival time " + meanArrTime;
+		return "Source: " + typeOfCall + " with mean arrival time " + meanArrTime;
 	}
 }

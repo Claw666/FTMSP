@@ -14,6 +14,7 @@ class Product
 	private ArrayList<String> events;
 	private ArrayList<String> stations;
 	private int typeOfCustCall;
+  private int callID;
 	
 	/** 
 	*	Constructor for the product
@@ -32,6 +33,14 @@ class Product
 		stations = new ArrayList<>();
 		this.typeOfCustCall = typeOfCustCall;
 	}
+
+  public Product(int typeOfCustCall, int callID) {
+    times = new ArrayList<>();
+    events = new ArrayList<>();
+    stations = new ArrayList<>();
+    this.typeOfCustCall = typeOfCustCall;
+    this.callID = callID;
+  }
 	
 	
 	public void stamp(double time,String event,String station)
@@ -83,6 +92,11 @@ class Product
 		tmp = stations.toArray(tmp);
 		return tmp;
 	}
+	public int getTypeOfCall() {return typeOfCustCall;}
+
+  	public int getCallID() {
+    return callID;
+  }
 
 	public String toString(){ return "Type of Call: " + typeOfCustCall + "and no. of times: " + times; }
 }

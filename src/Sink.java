@@ -1,4 +1,3 @@
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -98,13 +97,22 @@ public class Sink implements ProductAcceptor
 		try {
 			fw = new FileWriter(filename);
 			for (int i = 0; i < products.size(); i++) {
-				fw.append(String.valueOf(numbers.get(i)));
+				int typeOfAgent = 0;
+				if(products.get(i).getStations().get(1).contains("consumer CSA")){
+					typeOfAgent = 0;
+				}
+				else{
+					typeOfAgent = 1;
+				}
+				fw.append(String.valueOf(products.get(i).getTypeOfCall()));
 				fw.append(",");
-				fw.append(String.valueOf(events.get(i)));
+				fw.append(String.valueOf(typeOfAgent));
 				fw.append(",");
-				fw.append(String.valueOf(times.get(i)));
+				fw.append(String.valueOf(products.get(i).getTimes().get(0)));
 				fw.append(",");
-				fw.append(String.valueOf(stations.get(i)));
+				fw.append(String.valueOf(products.get(i).getTimes().get(1)));
+				fw.append(",");
+				fw.append(String.valueOf(products.get(i).getTimes().get(2)));
 				fw.append("\n");
 			}
 		}
@@ -116,7 +124,7 @@ public class Sink implements ProductAcceptor
 			try {
 				fw.flush();
 				fw.close();
-			} catch (IOException e) {
+			} catch (IOException | NullPointerException e) {
 				System.out.println("Error while flushing/closing fileWriter");
 				e.printStackTrace();
 			}
@@ -124,5 +132,64 @@ public class Sink implements ProductAcceptor
 		}
 
 	}
+	public void writeToFileWaitTimeConsumer(String filename)
+	{
+		FileWriter fw = null;
 
+		try {
+			fw = new FileWriter(filename);
+			for (int i = 0; i < products.size(); i++) {
+				if (products.get(i).getStations().get(0).equals("Source 1")) {
+
+					fw.append(String.valueOf(products.get(i).getTimes().get(1) - products.get(i).getTimes().get(0)));
+					fw.append("\n");
+				}
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Error in CSV writes");
+			e.printStackTrace();
+		} finally {
+
+			try {
+				fw.flush();
+				fw.close();
+			} catch (IOException | NullPointerException e) {
+				System.out.println("Error while flushing/closing fileWriter");
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+	public void writeToFileWaitTimeCorporate(String filename)
+	{
+		FileWriter fw = null;
+
+		try {
+			fw = new FileWriter(filename);
+			for (int i = 0; i < products.size(); i++) {
+				if (products.get(i).getStations().get(0).equals("Source 2")) {
+
+					fw.append(String.valueOf(products.get(i).getTimes().get(1) - products.get(i).getTimes().get(0)));
+					fw.append("\n");
+				}
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Error in CSV writes");
+			e.printStackTrace();
+		} finally {
+
+			try {
+				fw.flush();
+				fw.close();
+			} catch (IOException | NullPointerException e) {
+				System.out.println("Error while flushing/closing fileWriter");
+				e.printStackTrace();
+			}
+
+		}
+
+	}
 }

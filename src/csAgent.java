@@ -26,131 +26,83 @@ public class csAgent implements CProcess,ProductAcceptor
 	private double[] processingTimes;
 	/** Processing time iterator */
 	private int procCnt;
-	/**  Type of CSA - business or consumer */
-	private int typeOfCSA;
-	/** Privilege of handling all types of calls */
-	private boolean privHandBothType;
+
+	/**  Type of CSA -  consumer/corporate */
+	private int typeOfAgent;
+
+	private Queue sideQueue;
+
 	/** Standard Deviation */
 	private double standardDeviation;
+
 	/** Truncated Value */
 	private double truncatedThreshold;
 
-	public double getMeanProcTime(){
-		return this.meanProcTime;
-	}
+	private double endOfShift;
 
-	public double getStandardDeviation(){
-		return this.standardDeviation;
-	}
+	public static int numbOfIdledCorpAgent = 0;
 
-	public double getTruncatedThreshold(){
-		return this.truncatedThreshold;
-	}
+	public static int minNumOfIdledCorpAgent = 0;
+
+	public double getMeanProcTime(){return this.meanProcTime;}
+
+	public double getStandardDeviation(){return this.standardDeviation;}
+
+	public double getTruncatedThreshold(){return this.truncatedThreshold;}
+
+	public int getNumbOfIdledCorpAgent() {return  this.numbOfIdledCorpAgent; }
+
+	public int getMinNumOfIdledCorpAgent() {return  this.minNumOfIdledCorpAgent;}
+
+	public int getTypeOfAgent() {return this.typeOfAgent;}
+
 
 	/**
-	*	Constructor
+	*	Constructor - CONSUMER AGENT
 	*   Service times are exponentially distributed with mean 30
 	*	@param q	Queue from which the machine has to take products
 	*	@param s	Where to send the completed products
 	*	@param e	Eventlist that will manage events
 	*	@param n	The name of the machine
 	*/
-	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n)
+	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n, int endOfShift, int typeOfAgent)
 	{
-		status='i';
-		queue=q;
-		sink=s;
-		eventlist=e;
-		name=n;
-		meanProcTime=30;
+		this.typeOfAgent = typeOfAgent;
+		this.status='i';
+		this.queue=q;
+		this.sink=s;
+		this.eventlist=e;
+		this.name=n;
+		this.endOfShift = endOfShift;
 		queue.askProduct(this);
-	}
-
-	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n, int typeOfCSA)
-	{
-		status='i';
-		queue=q;
-		sink=s;
-		eventlist=e;
-		name=n;
-		this.typeOfCSA = typeOfCSA;
-		if(typeOfCSA == 0){
-            standardDeviation = 35;
-			meanProcTime=72;
-			truncatedThreshold = 25;
-
-		} else{
-            standardDeviation = 72;
-			meanProcTime=216;
-			truncatedThreshold = 45;
-		}
-		privHandBothType = false;
-		queue.askProduct(this);
-	}
-
-	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n, int typeOfCSA, boolean privHandBothType)
-	{
-		status='i';
-		queue=q;
-		sink=s;
-		eventlist=e;
-		name=n;
-		if(typeOfCSA == 0){
-            standardDeviation = 35;
-			meanProcTime=72;
-			truncatedThreshold = 25;
-
-		}
-		else{
-            standardDeviation = 72;
-			meanProcTime=216;
-			truncatedThreshold = 45;
-		}
-		this.typeOfCSA = typeOfCSA;
-		this.privHandBothType = privHandBothType;
-		queue.askProduct(this);
-	}
-
-	/**
-	*	Constructor
-	*        Service times are exponentially distributed with specified mean
-	*	@param q	Queue from which the machine has to take products
-	*	@param s	Where to send the completed products
-	*	@param e	Eventlist that will manage events
-	*	@param n	The name of the machine
-	*        @param m	Mean processing time
-	*/
-	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n, double m)
-	{
-		status='i';
-		queue=q;
-		sink=s;
-		eventlist=e;
-		name=n;
-		meanProcTime=m;
-		queue.askProduct(this);
+		this.standardDeviation = 35;
+		this.meanProcTime = 72;
+		this.truncatedThreshold = 25;
 	}
 	
 	/**
-	*	Constructor
+	*	Constructor - CORPORATE
 	*        Service times are pre-specified
 	*	@param q	Queue from which the machine has to take products
 	*	@param s	Where to send the completed products
 	*	@param e	Eventlist that will manage events
 	*	@param n	The name of the machine
-	*        @param st	service times
+	*
 	*/
-	public csAgent(Queue q, ProductAcceptor s, CEventList e, String n, double[] st)
+	public csAgent(Queue q, Queue q2, ProductAcceptor s, CEventList e, String n, double endOfShift, int typeOfAgent)
 	{
-		status='i';
-		queue=q;
-		sink=s;
-		eventlist=e;
-		name=n;
-		meanProcTime=-1;
-		processingTimes=st;
-		procCnt=0;
-		queue.askProduct(this);
+		this.typeOfAgent = typeOfAgent;
+		this.status='i';
+		this.numbOfIdledCorpAgent +=1;
+		this.queue=q;
+		this.sideQueue = q2;
+		this.sink=s;
+		this.eventlist=e;
+		this.name=n;
+		this.endOfShift = endOfShift;
+		if(!queue.askProduct(this)) {
+			sideQueue.askProduct(this);
+		}
 	}
 
 	/**
@@ -168,6 +120,18 @@ public class csAgent implements CProcess,ProductAcceptor
 		product=null;
 		// set machine status to idle
 		status='i';
+		if(typeOfAgent == 1) {
+			numbOfIdledCorpAgent +=1;
+		}
+		if(tme < endOfShift) {
+			if(sideQueue == null) {
+				queue.askProduct(this);
+			} else {
+				if(! queue.askProduct(this)){
+					sideQueue.askProduct(this);
+				}
+			}
+		}
 		// Ask the queue for products
 		queue.askProduct(this);
 	}
@@ -184,12 +148,26 @@ public class csAgent implements CProcess,ProductAcceptor
 		if(status=='i')
 		{
 		    // If corp CSA in idle or consumer agent idle
-			if (this.privHandBothType || this.typeOfCSA == p.getTypeOfCustCall()) {
-				System.out.println(this.name + " Gets call with type " + typeOfCSA);
+			if (this.typeOfAgent == p.getTypeOfCall() || (p.getTypeOfCall() == 0 && numbOfIdledCorpAgent > minNumOfIdledCorpAgent)) {
+				System.out.println(this.name + " Gets call with type " + typeOfAgent);
 				// accept the product
 				product=p;
 				// mark starting time
 				product.stamp(eventlist.getTime(),"Call started",name);
+				if (this.typeOfAgent == 1){
+					if (p.getTypeOfCall() == 0){
+						this.standardDeviation = 35;
+						this.meanProcTime = 72;
+						this.truncatedThreshold = 25;
+					}
+					else {
+						this.standardDeviation = 72;
+						this.meanProcTime = 216;
+						this.truncatedThreshold = 45;
+					}
+				}
+
+
 				// start production
 				startProduction();
 				// Flag that the product has arrived
@@ -210,13 +188,16 @@ public class csAgent implements CProcess,ProductAcceptor
 		// generate duration
 		if(meanProcTime>0)
 		{
-			double duration = drawTruncatedNormalDist();
+			double duration = truncatedNormalDist();
 			// Create a new event in the eventlist
 			double tme = eventlist.getTime();
-			eventlist.add(this,typeOfCSA,tme+duration); //target,type,time
+			eventlist.add(this,typeOfAgent,tme+duration); //target,type,time
 			// set status to busy
 			status='b';
-		}
+			if (this.typeOfAgent == 1) {
+				numbOfIdledCorpAgent -= 1;
+			}
+		} /*
 		else
 		{
 			if(processingTimes.length>procCnt)
@@ -230,7 +211,7 @@ public class csAgent implements CProcess,ProductAcceptor
 			{
 				eventlist.stop();
 			}
-		}
+		} */
 	}
 
 	public static double drawRandomExponential(double mean)
@@ -272,7 +253,7 @@ public class csAgent implements CProcess,ProductAcceptor
     }
 
 
-	public double drawTruncatedNormalDist() {
+	public double truncatedNormalDist() {
 		double U1 = Math.random();
 		double U2 = Math.random();
 		double randVar1 = boxMullerTransformOne(U1,U2);
@@ -288,7 +269,7 @@ public class csAgent implements CProcess,ProductAcceptor
 
 		//in case both our outside the range, run algorithm again.
 		else if (randVar1 < 0 && randVar2 < 0)
-            drawTruncatedNormalDist();
+            truncatedNormalDist();
 
 		//in case both are valid, choose randomly from them.
         double tossACoin = Math.random();

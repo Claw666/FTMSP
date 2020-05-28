@@ -19,63 +19,77 @@ public class Simulation {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+
         /** Add shifts as matrix
          *  A Shift is setup as follows:
-         *  start of shift (hour), finish of shift (hour), no of CSA of type 0, no of CSA of type 1
-         *  24 hour is dealt later on so 30-24=6am
+         *  no of consumer CSA, no of corporate CSA
          * */
-        int[] firstShift = {6,14,40,40};
-        int[] secondShift = {14,22,50,50};
-        int[] thirdShift = {22,30,40,40};
+
+        int[] firstShift = {0,5};
+        int[] secondShift = {2,5};
+        int[] thirdShift = {0,5};
         // Convert shifts to matrix, easier to manipulate (than having 3 while or 3 for-loops)
         int[][] shifts = {firstShift,secondShift,thirdShift};
 
-        //Length of shift matrix
-        int numberOfShifts = shifts.length;
-
-        //initialize counter
-        int j = 0;
-
-        //Boolean for checking if CSA can handle both types of call or not
-        boolean privHandAllType = false;
+        csAgent.numbOfIdledCorpAgent = 0;
+        String strategy = "First Strategy";
+        if(csAgent.minNumOfIdledCorpAgent > 0) {
+            strategy = "Second Strategy";
+        }
+        int i = 0;
+        int numberOfRuns = 5;
+        int numberOfDays = 15;
+        int startOfShift = 6 * 3600;
+        int simDuration = numberOfDays * 24 * 3600;
+        int shiftLength = 8 * 3600;
+        int numberOfShifts = (simDuration / shiftLength);
+        int endOfShift;
 
         //Do for all shifts - here for 3 shifts
-        while (j < numberOfShifts) {
-            // Convert the shift start and end times to seconds
-            double startOfShift = shifts[j][0] * 3600;
-            double endOfShift = shifts[j][1] * 3600;
-            // get number of agents
-            int noOfConsAgent = shifts[j][2]; //Consumer
-            int noOfCorpAgent = shifts[j][3]; //Corporate
+        while (i < numberOfRuns) {
 
             // Create an eventlist
             CEventList l = new CEventList(startOfShift);
 
             // A queue for the agents so we can store calls until it can be handled by an agent
             Queue q = new Queue();
+            Queue q2 = new Queue();
 
             // A source for Consumer Customer Call
             Source callConsumerCust = new Source(q,l,"Source 1", 0);
             // A source for Corporate Customer Call
-            Source callCorporateCust = new Source(q,l,"Source 2", 1);
+            Source callCorporateCust = new Source(q2,l,"Source 2", 1);
 
             // A sink
             Sink si = new Sink("Sink 1");
 
-            // Until we have agents, create them with their ID
-            for (int i = 0; i < noOfConsAgent; i++) {
-                csAgent consumerAgent = new csAgent(q, si, l, "Consumer Agent with ID " + i, 0);
+            endOfShift = startOfShift;
+
+            for(int j = 0; j < (numberOfShifts + 1); j++){
+                endOfShift += shiftLength;
+                int shiftType = j % 3;
+                csAgent.numbOfIdledCorpAgent = 0;
+                for (int k = 0; k < shifts[shiftType][0]; k++) {
+                    // A consumer CSA
+                    csAgent consumerAgent= new csAgent(q, si, l, "Consumer Agent with ID " + k, endOfShift,0);
+                }
+
+                for (int k = 0; k < shifts[shiftType][1]; k++) {
+                    // A corporate csa
+                    csAgent corporateAgent = new csAgent(q,q2, si, l, "Corporate Agent with ID " + k, endOfShift,1);
+                }
             }
 
-            for (int i = 0; i < noOfCorpAgent; i++) {
-                csAgent corporateAgent = new csAgent(q, si, l, "Corporate Agent with ID " + i, 1, privHandAllType);
-            }
 
             // start the eventlist
             l.start(endOfShift);
-            si.writeToFile(" " + j + ".csv");
-            j++;
+            si.writeToFile("callInformation" + i + ".csv");
+            si.writeToFileWaitTimeConsumer("consumerWaitingTimes" + i + ".csv");
+            si.writeToFileWaitTimeCorporate("corporateWaitingTimes" + i + ".csv");
+            i++;
         }
+        int costOfOperation = (shifts[0][0] + shifts[1][0] + shifts[2][0]) * 8 * 35 + (shifts[0][1] + shifts[1][1] + shifts[2][1])*8 * 60;
+        System.out.println(" Cost of current setup is... : " + costOfOperation + "Euro per day.");
     }
 }
