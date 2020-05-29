@@ -16,43 +16,47 @@ function passedRequirements = checkRequirementsBoolean(phonecalls)
     
     for i=1:1:amountofcalls
         if phonecalls(i,1) == 1 % chekc if call is consumer
-            consumercalls = consumercalls +1
+            consumercalls = consumercalls +1;
             if phonecalls(i,3) - phonecalls(i,2) > 600
-                over10 = over10 +1 %if longer than 10min -> +1
+                over10 = over10 +1; %if longer than 10min -> +1
             else
                 if phonecalls(i,3) - phonecalls(i,2) > 300
-                    over5 = over5 +1 %if longer than 5min -> +1
+                    over5 = over5 +1; %if longer than 5min -> +1
                 end
             end
         else %else it's corporate
-            corporatecalls = corporatecalls + 1
-            if phonecalls(i,3) - phonecalls(i,2) > 420 %blaze it
-                over7 = over7 + 1
+            corporatecalls = corporatecalls + 1;
+            if phonecalls(i,3) - phonecalls(i,2) > 420
+                over7 = over7 + 1;
             else 
                 if phonecalls(i,3) - phonecalls(i,2) > 180
-                    over3 = over3 + 1 
+                    over3 = over3 + 1 ;
                 end
             end
         end
     end
-    over10p = over10 / consumercalls
-    over5p = (over5 + over10) / consumercalls
-    over7p = over7 / corporatecalls
-    over3p = (over3 + over7) / corporatecalls
+    over10p = over10 / consumercalls;
+    over5p = (over5 + over10) / consumercalls;
+    over7p = over7 / corporatecalls;
+    over3p = (over3 + over7) / corporatecalls;
     
     if over10p > 0.05
+         disp(over10p)
          passedRequirements = false
     end
     
     if over5p > 0.1
+        disp(over5p)
         passedRequirements = false
     end
     
     if over7p > 0.01
+        disp(over7p)
         passedRequirements = false
     end
     
     if over3p > 0.05
+        disp(over3p)
         passedRequirements = false
     end
     

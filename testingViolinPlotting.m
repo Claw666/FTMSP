@@ -22,8 +22,8 @@ for i = 1:amountOfCalls
 end
 
 
-fprintf('General Table containing type 1 and 2 calls')
-display(infoTable);
+%fprintf('General Table containing type 1 and 2 calls')
+%display(infoTable);
 
 
 figure

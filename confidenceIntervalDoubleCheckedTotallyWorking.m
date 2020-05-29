@@ -1,4 +1,4 @@
-function [CIgeneral, CItype1, CItype2] = getConfidenceInterval(phoneCalls)
+function [CIgeneral, CItype0, CItype1] = confidenceIntervalDoubleCheckedTotallyWorking(phoneCalls)
 
 %phoneCalls = [1, 0, 700; 
 %    1, 0, 400; 
@@ -40,7 +40,7 @@ end
 
 
 fprintf('General Table containing type 0 and 1')
-display(infoTable);
+%display(infoTable);
 
 type0Index = 1;
 type1Index = 1;
@@ -71,10 +71,10 @@ for i = 1:amountOfCalls
 end
 
 fprintf('Separated table of call type 0');
-display(infoTable0);
+%display(infoTable0);
 
 fprintf('Separated table of call type 1');
-display(infoTable1);
+%display(infoTable1);
 
 %%%%%%START CI
 

@@ -34,8 +34,8 @@ function [over5p, over10p, over3p, over7p] = checkRequirementsPercentage(phoneca
             end
         end
     end
-    over10p = over10 / consumercalls
-    over5p = (over5 + over10) / consumercalls
-    over7p = over7 / corporatecalls
-    over3p = (over3 + over7) / corporatecalls
+    over10p = over10 / consumercalls;
+    over5p = (over5 + over10) / consumercalls;
+    over7p = over7 / corporatecalls;
+    over3p = (over3 + over7) / corporatecalls;
 end
