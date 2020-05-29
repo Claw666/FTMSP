@@ -1,15 +1,15 @@
 callsAllRuns = zeros( (size(callInformation0,1) + size(callInformation1,1) + size(callInformation2,1) + size(callInformation3,1) + size(callInformation4,1)+ size(callInformation5,1)+ size(callInformation6,1)+ size(callInformation7,1)+ size(callInformation8,1)+ size(callInformation9,1)), 5);
- callInformation0 = table2array(callInformation0);
- callInformation1 = table2array(callInformation1);
-callInformation2 = table2array(callInformation2);
-callInformation3 = table2array(callInformation3);
-callInformation4 = table2array(callInformation4);
-callInformation5 = table2array(callInformation5);
-callInformation6 = table2array(callInformation6);
-callInformation7 = table2array(callInformation7);
-callInformation8 = table2array(callInformation8);
-callInformation9 = table2array(callInformation9);
-
+%  callInformation0 = table2array(callInformation0);
+%  callInformation1 = table2array(callInformation1);
+% callInformation2 = table2array(callInformation2);
+% callInformation3 = table2array(callInformation3);
+% callInformation4 = table2array(callInformation4);
+% callInformation5 = table2array(callInformation5);
+% callInformation6 = table2array(callInformation6);
+% callInformation7 = table2array(callInformation7);
+% callInformation8 = table2array(callInformation8);
+% callInformation9 = table2array(callInformation9);
+% 
 for i=1:1:(size(callInformation0,1) + size(callInformation1,1) + size(callInformation2,1) + size(callInformation3,1) + size(callInformation4,1))
     if (i < (size(callInformation0,1)))
         callsAllRuns(i,1) = callInformation0(i,1);
@@ -103,8 +103,8 @@ checkRequirementsPercentage(phoneCalls)
 
 violinTable = zeros(size(phoneCalls,1), 2);
 for i=1:size(phoneCalls,1)
-    violinTable(i,1) = callsAllRuns(:,2) - callsAllRuns(:,3);
-    violinTable(i,1) = callsAllRuns(:,1);
+    violinTable(i,1) = phoneCalls(i,2) - phoneCalls(i,3);
+    violinTable(i,1) = phoneCalls(i,1);
 end
 fprintf('General Table containing type 1 and 2 calls')
 display(infoTable);
