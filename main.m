@@ -1,6 +1,8 @@
-callsAllRuns = zeros( (size(callInformation0,1) + size(callInformation1,1) + size(callInformation2,1) + size(callInformation3,1) + size(callInformation4,1)+ size(callInformation5,1)+ size(callInformation6,1)+ size(callInformation7,1)+ size(callInformation8,1)+ size(callInformation9,1)), 5);
-%  callInformation0 = table2array(callInformation0);
-%  callInformation1 = table2array(callInformation1);
+callsAllRuns = zeros( (size(callInformation0,1) + size(callInformation1,1)), 5);
+%+ size(callInformation2,1) + size(callInformation3,1) + size(callInformation4,1)+ size(callInformation5,1)+ size(callInformation6,1)+ size(callInformation7,1)+ size(callInformation8,1)+ size(callInformation9,1))
+
+ callInformation0 = table2array(callInformation0);
+ callInformation1 = table2array(callInformation1);
 % callInformation2 = table2array(callInformation2);
 % callInformation3 = table2array(callInformation3);
 % callInformation4 = table2array(callInformation4);
@@ -24,73 +26,73 @@ for i=1:1:(size(callInformation0,1) + size(callInformation1,1) + size(callInform
         callsAllRuns(i,3) = callInformation1(i,3);
         callsAllRuns(i,4) = callInformation1(i,4);
         callsAllRuns(i,5) = callInformation1(i,5);
-        else
-            if (i < (size(callInformation2,1)))
-            callsAllRuns(i,1) = callInformation2(i,1);
-            callsAllRuns(i,2) = callInformation2(i,2);
-            callsAllRuns(i,3) = callInformation2(i,3);
-            callsAllRuns(i,4) = callInformation2(i,4);
-            callsAllRuns(i,5) = callInformation2(i,5);
-             else
-                 if (i < (size(callInformation3,1)))
-                callsAllRuns(i,1) = callInformation3(i,1);
-                callsAllRuns(i,2) = callInformation3(i,2);
-                callsAllRuns(i,3) = callInformation3(i,3);
-                callsAllRuns(i,4) = callInformation3(i,4);
-                callsAllRuns(i,5) = callInformation3(i,5);
-                 else
-                     if (i < (size(callInformation4,1)))
-                    callsAllRuns(i,1) = callInformation4(i,1);
-                    callsAllRuns(i,2) = callInformation4(i,2);
-                    callsAllRuns(i,3) = callInformation4(i,3);
-                    callsAllRuns(i,4) = callInformation4(i,4);
-                    callsAllRuns(i,5) = callInformation4(i,5);
-                     else
-                         if (i < (size(callInformation5,1)))
-                        callsAllRuns(i,1) = callInformation5(i,1);
-                        callsAllRuns(i,2) = callInformation5(i,2);
-                        callsAllRuns(i,3) = callInformation5(i,3);
-                        callsAllRuns(i,4) = callInformation5(i,4);
-                        callsAllRuns(i,5) = callInformation5(i,5);
-                         else
-                            if (i < (size(callInformation6,1)))
-                            callsAllRuns(i,1) = callInformation6(i,1);
-                            callsAllRuns(i,2) = callInformation6(i,2);
-                            callsAllRuns(i,3) = callInformation6(i,3);
-                            callsAllRuns(i,4) = callInformation6(i,4);
-                            callsAllRuns(i,5) = callInformation6(i,5);
-                 else
-                         if (i < (size(callInformation7,1)))
-                        callsAllRuns(i,1) = callInformation7(i,1);
-                        callsAllRuns(i,2) = callInformation7(i,2);
-                        callsAllRuns(i,3) = callInformation7(i,3);
-                        callsAllRuns(i,4) = callInformation7(i,4);
-                        callsAllRuns(i,5) = callInformation7(i,5);
-                 else
-                         if (i < (size(callInformation8,1)))
-                        callsAllRuns(i,1) = callInformation8(i,1);
-                        callsAllRuns(i,2) = callInformation8(i,2);
-                        callsAllRuns(i,3) = callInformation8(i,3);
-                        callsAllRuns(i,4) = callInformation8(i,4);
-                        callsAllRuns(i,5) = callInformation8(i,5);
-                 
-                    else
-                         if (i < (size(callInformation9,1)))
-                        callsAllRuns(i,1) = callInformation9(i,1);
-                        callsAllRuns(i,2) = callInformation9(i,2);
-                        callsAllRuns(i,3) = callInformation9(i,3);
-                        callsAllRuns(i,4) = callInformation9(i,4);
-                        callsAllRuns(i,5) = callInformation9(i,5);
-                         end
-                         end
-                         end
-                            end
-                         end
-                         
-                     end
-                end
-             end
-        end
+%         else
+%             if (i < (size(callInformation2,1)))
+%             callsAllRuns(i,1) = callInformation2(i,1);
+%             callsAllRuns(i,2) = callInformation2(i,2);
+%             callsAllRuns(i,3) = callInformation2(i,3);
+%             callsAllRuns(i,4) = callInformation2(i,4);
+%             callsAllRuns(i,5) = callInformation2(i,5);
+%              else
+%                  if (i < (size(callInformation3,1)))
+%                 callsAllRuns(i,1) = callInformation3(i,1);
+%                 callsAllRuns(i,2) = callInformation3(i,2);
+%                 callsAllRuns(i,3) = callInformation3(i,3);
+%                 callsAllRuns(i,4) = callInformation3(i,4);
+%                 callsAllRuns(i,5) = callInformation3(i,5);
+%                  else
+%                      if (i < (size(callInformation4,1)))
+%                     callsAllRuns(i,1) = callInformation4(i,1);
+%                     callsAllRuns(i,2) = callInformation4(i,2);
+%                     callsAllRuns(i,3) = callInformation4(i,3);
+%                     callsAllRuns(i,4) = callInformation4(i,4);
+%                     callsAllRuns(i,5) = callInformation4(i,5);
+%                      else
+%                          if (i < (size(callInformation5,1)))
+%                         callsAllRuns(i,1) = callInformation5(i,1);
+%                         callsAllRuns(i,2) = callInformation5(i,2);
+%                         callsAllRuns(i,3) = callInformation5(i,3);
+%                         callsAllRuns(i,4) = callInformation5(i,4);
+%                         callsAllRuns(i,5) = callInformation5(i,5);
+%                          else
+%                             if (i < (size(callInformation6,1)))
+%                             callsAllRuns(i,1) = callInformation6(i,1);
+%                             callsAllRuns(i,2) = callInformation6(i,2);
+%                             callsAllRuns(i,3) = callInformation6(i,3);
+%                             callsAllRuns(i,4) = callInformation6(i,4);
+%                             callsAllRuns(i,5) = callInformation6(i,5);
+%                  else
+%                          if (i < (size(callInformation7,1)))
+%                         callsAllRuns(i,1) = callInformation7(i,1);
+%                         callsAllRuns(i,2) = callInformation7(i,2);
+%                         callsAllRuns(i,3) = callInformation7(i,3);
+%                         callsAllRuns(i,4) = callInformation7(i,4);
+%                         callsAllRuns(i,5) = callInformation7(i,5);
+%                  else
+%                          if (i < (size(callInformation8,1)))
+%                         callsAllRuns(i,1) = callInformation8(i,1);
+%                         callsAllRuns(i,2) = callInformation8(i,2);
+%                         callsAllRuns(i,3) = callInformation8(i,3);
+%                         callsAllRuns(i,4) = callInformation8(i,4);
+%                         callsAllRuns(i,5) = callInformation8(i,5);
+%                  
+%                     else
+%                          if (i < (size(callInformation9,1)))
+%                         callsAllRuns(i,1) = callInformation9(i,1);
+%                         callsAllRuns(i,2) = callInformation9(i,2);
+%                         callsAllRuns(i,3) = callInformation9(i,3);
+%                         callsAllRuns(i,4) = callInformation9(i,4);
+%                         callsAllRuns(i,5) = callInformation9(i,5);
+%                          end
+%                          end
+%                          end
+%                             end
+%                          end
+%                          
+%                      end
+%                 end
+%              end
+         end
     end
 end
 
@@ -102,18 +104,18 @@ phoneCalls(:,3) = callsAllRuns(:,5);
 [over10, over5, over3, over7] = checkRequirementsPercentage(phoneCalls)
 checkRequirementsBoolean(phoneCalls)
 confidenceIntervalDoubleCheckedTotallyWorking(phoneCalls)
-% 
-% violinTable = zeros(size(phoneCalls,1), 2);
-% for i=1:size(phoneCalls,1)
-%     violinTable(i,1) = phoneCalls(i,3) - phoneCalls(i,2);
-%     violinTable(i,2) = phoneCalls(i,1);
-% end
-% fprintf('General Table containing type 1 and 2 calls')
-% %display(violinTable);
-% 
-% 
-% figure
-% vs = violinplot(violinTable(:,1), violinTable(:,2));
-% ylabel('Average time')
-% xlabel('Call type')
-% 
+
+violinTable = zeros(size(phoneCalls,1), 2);
+for i=1:size(phoneCalls,1)
+    violinTable(i,1) = phoneCalls(i,3) - phoneCalls(i,2);
+    violinTable(i,2) = phoneCalls(i,1);
+end
+fprintf('General Table containing type 1 and 2 calls')
+%display(violinTable);
+
+
+figure
+vs = violinplot(violinTable(:,1), violinTable(:,2));
+ylabel('Average time')
+xlabel('Call type')
+
