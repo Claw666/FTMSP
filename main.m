@@ -103,15 +103,15 @@ checkRequirementsPercentage(phoneCalls)
 
 violinTable = zeros(size(phoneCalls,1), 2);
 for i=1:size(phoneCalls,1)
-    violinTable(i,1) = phoneCalls(i,2) - phoneCalls(i,3);
-    violinTable(i,1) = phoneCalls(i,1);
+    violinTable(i,1) = phoneCalls(i,3) - phoneCalls(i,2);
+    violinTable(i,2) = phoneCalls(i,1);
 end
 fprintf('General Table containing type 1 and 2 calls')
-display(infoTable);
+%display(violinTable);
 
 
 figure
-vs = violinplot(infoTable(:,4), infoTable(:,1));
+vs = violinplot(violinTable(:,1), violinTable(:,2));
 ylabel('Average time')
 xlabel('Call type')
 
