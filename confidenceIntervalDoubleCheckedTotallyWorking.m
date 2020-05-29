@@ -1,17 +1,20 @@
-phoneCalls = [1, 0, 700; 
-    1, 0, 400; 
-    1, 0, 200; 
-    2, 0, 700; 
-    2, 0, 400; 
-    2, 0, 100; 
-    1, 200, 500; 
-    1, 400, 700;
-    2, 50, 376;
-    1, 3, 534;
-    2, 575, 2342;
-    1 4 19;
-    2 23 225;
-    ]
+function [CIgeneral, CItype1, CItype2] = getConfidenceInterval(phoneCalls)
+
+
+% phoneCalls = [1, 0, 700; 
+%     1, 0, 400; 
+%     1, 0, 200; 
+%     2, 0, 700; 
+%     2, 0, 400; 
+%     2, 0, 100; 
+%     1, 200, 500; 
+%     1, 400, 700;
+%     2, 50, 376;
+%     1, 3, 534;
+%     2, 575, 2342;
+%     1 4 19;
+%     2 23 225;
+%     ]
 
 amountOfCalls = size(phoneCalls,1);
 infoTable = zeros(amountOfCalls,6);
