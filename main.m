@@ -12,7 +12,8 @@ callsAllRuns = zeros( (size(callInformation0,1) + size(callInformation1,1)), 5);
 % callInformation8 = table2array(callInformation8);
 % callInformation9 = table2array(callInformation9);
 % 
-for i=1:1:(size(callInformation0,1) + size(callInformation1,1) + size(callInformation2,1) + size(callInformation3,1) + size(callInformation4,1))
+for i=1:1:(size(callInformation0,1) + size(callInformation1,1))
+    %+ size(callInformation2,1) + size(callInformation3,1) + size(callInformation4,1))
     if (i < (size(callInformation0,1)))
         callsAllRuns(i,1) = callInformation0(i,1);
         callsAllRuns(i,2) = callInformation0(i,2);
